@@ -323,7 +323,7 @@ Management
 ### Interface Assignments
 
 
-![Interface Assignments](screenshots/interface_assignments.png)
+![Interface Assignments](screenshots/interface_assignment.png)
 
 
 
