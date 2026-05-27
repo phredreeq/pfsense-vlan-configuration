@@ -1,57 +1,43 @@
-# 🌐 pfSense VLAN Configuration
-### Implementing Network Segmentation Using
-### Virtual LANs in a Homelab Environment
+# pfSense VLAN Configuration
+### Implementing Network Segmentation Using Virtual LANs in a Homelab Environment
 
 ---
 
 ## 🎯 What This Project Is About
 
-This project implements real VLAN-based network
-segmentation in pfSense. Instead of having all
-VMs on one flat network, we create three isolated
-virtual networks — each with its own subnet,
-gateway and security boundary.
+This project implements real VLAN-based network segmentation in pfSense. Instead of having all VMs on one flat network, we create three isolated virtual networks, each with its own subnet, gateway and security boundary.
 
-This mirrors how enterprise networks are designed
-to contain attacks, limit lateral movement and
-enforce least privilege at the network level.
+This mirrors how enterprise networks are designed to contain attacks, limit lateral movement and enforce least privilege at the network level.
 
-Attack scenario: Flat network allows unrestricted
-lateral movement between all devices
-Solution: VLAN segmentation isolates each network
-zone — attack machine cannot directly reach servers
+Attack scenario: Flat network allows unrestricted lateral movement between all devices
+
+Solution: VLAN segmentation isolates each network zone, attack machine cannot directly reach servers
+
 Tools: pfSense, VirtualBox, Kali Linux
 
 ---
 
-## 🧠 Understanding the Problem
+## Understanding the Problem
 
 ### What is a Flat Network?
 
-A flat network has all devices on the same subnet
-with no separation between them.
+A flat network has all devices on the same subnet with no separation between them.
 
-Your homelab before VLANs:
+My homelab before VLANs:
 
-192.168.10.0/24 — Everyone on same network
-Kali Linux — 192.168.10.102
-Windows VM — 192.168.10.100
-Ubuntu Server — 192.168.20.101
+192.168.10.0/24 - Everyone on same network
+Kali Linux - 192.168.10.102
+Windows VM - 192.168.10.100
+Ubuntu Server - 192.168.20.101
+
 Problem with flat networks:
-If Kali Linux is compromised — attacker has
-direct access to every other device with no
-barriers. This is called unrestricted lateral
-movement.
+If Kali Linux is compromised, attacker has direct access to every other device with no barriers. This is called unrestricted lateral movement.
 
 ### How VLANs Solve This
 
-VLANs create isolated Layer 2 segments.
-Devices in different VLANs cannot communicate
-directly — all traffic must pass through pfSense.
+VLANs create isolated Layer 2 segments. Devices in different VLANs cannot communicate directly, all traffic must pass through pfSense.
 
-pfSense then enforces firewall rules on every
-inter-VLAN connection — giving complete control
-over what can talk to what.
+pfSense then enforces firewall rules on every inter-VLAN connection, giving complete control over what can talk to what.
 
 ### VLANs vs Subnetting
 
@@ -74,24 +60,16 @@ Both are needed for proper segmentation.
 |---|---|
 | Tactic | Lateral Movement (TA0008) |
 | Technique | Internal Spearphishing (T1534) |
-| Also relevant | Remote Services (T1021) |
 | Defensive technique | Network Segmentation (M1030) |
-| Reference | attack.mitre.org/mitigations/M1030 |
 
 ### What This Means
 
-VLAN segmentation directly mitigates lateral
-movement attacks. MITRE ATT&CK lists Network
-Segmentation (M1030) as a primary mitigation
-against techniques including:
+VLAN segmentation directly mitigates lateral movement attacks. MITRE ATT&CK lists Network Segmentation (M1030) as a primary mitigation against techniques including:
 - Remote Services (T1021) — SSH, RDP
 - Lateral Tool Transfer (T1570)
 - Internal Spearphishing (T1534)
 
-By isolating Kali Linux in its own VLAN an
-attacker who compromises that machine cannot
-directly reach the server network without
-being intercepted by pfSense firewall rules.
+By isolating Kali Linux in its own VLAN an attacker who compromises that machine cannot directly reach the server network without being intercepted by pfSense firewall rules.
 
 ---
 
@@ -118,7 +96,7 @@ being intercepted by pfSense firewall rules.
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 
 
@@ -141,22 +119,20 @@ VLAN 10 → 10.10.10.0/24
 VLAN 20 → 10.20.20.0/24
 VLAN 30 → 10.30.30.0/24
 
-This is a professional standard convention —
-easy to remember and immediately readable
-in firewall logs and network diagrams.
+This is a professional standard convention to make it easy to remember and immediately readable in firewall logs and network diagrams.
 
 ### Traffic Flow
 
 Kali Linux (VLAN 10) tries to reach Ubuntu (VLAN 20):
-Step 1 — Kali sends packet to 10.20.20.x
-Step 2 — Traffic hits VLAN 10 gateway 10.10.10.1
-Step 3 — pfSense evaluates inter-VLAN firewall rules
-Step 4 — Rule allows or blocks based on policy
-Step 5 — If allowed — routes to VLAN 20 gateway
-Step 6 — Ubuntu receives packet
+Step 1 - Kali sends packet to 10.20.20.x
+Step 2 - Traffic hits VLAN 10 gateway 10.10.10.1
+Step 3 - pfSense evaluates inter-VLAN firewall rules
+Step 4 - Rule allows or blocks based on policy
+Step 5 - If allowed — routes to VLAN 20 gateway
+Step 6 - Ubuntu receives packet
 
-Without VLANs — Step 3 and 4 don't exist.
-With VLANs — pfSense controls everything.
+Without VLANs, step 3 and 4 don't exist.
+With VLANs, pfSense controls everything.
 
 ---
 
@@ -211,10 +187,7 @@ Description: Management
 Click Save.
 
 Why em1 (lan) as parent?
-VLANs must be created on LAN interface —
-never on WAN. WAN faces the internet and
-VLAN tags on WAN would expose internal
-network structure externally.
+VLANs must be created on LAN interface, never on WAN. WAN faces the internet and VLAN tags on WAN would expose internal network structure externally.
 
 Expected result:
 Three VLANs listed:
@@ -383,7 +356,7 @@ VLANs help detect these lateral movement IOCs:
 
 ---
 
-## 🧠 Understanding the Results
+## Understanding the Results
 
 ### What VLAN Segmentation Achieves
 
@@ -453,6 +426,14 @@ After implementing VLANs:
   attack.mitre.org/tactics/TA0008
 - 802.1Q VLAN standard:
   ieee802.org/1/pages/802.1Q.html
+
+---
+
+## 🔗 Related Projects
+- [pfSense Firewall Configuration](https://github.com/Phredreeq/pfsense-firewall-configuration)
+- [pfSense Firewall Deep Dive](https://github.com/Phredreeq/pfsense-firewall-deep-dive)
+- [pfSense Real-Time Log Forwarding](https://github.com/Phredreeq/pfsense-splunk-log-forwarding)
+- [VLAN and Network Segmentation Concepts](https://github.com/Phredreeq/vlan-network-segmentation-concepts)
 
 ---
 
