@@ -100,7 +100,7 @@ By isolating Kali Linux in its own VLAN an attacker who compromises that machine
 
 
 
-![Architecture Diagram](architecture_diagram.png)
+![Architecture Diagram](architectue_diagam.jpeg)
 
 
 
